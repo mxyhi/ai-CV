@@ -160,9 +160,19 @@ export class BotsService {
       throw new ForbiddenException("无权修改此机器人");
     }
 
+    // 从更新数据中移除 welcomeMessage，因为它应该从 Dify API 同步获取
+    const { welcomeMessage, ...updateData } = updateBotDto;
+
+    // 如果用户尝试更新 welcomeMessage，记录警告
+    if (welcomeMessage !== undefined) {
+      console.warn(
+        `用户尝试更新机器人 ${id} 的 welcomeMessage，此字段将被忽略。请使用同步接口从 Dify 获取最新信息。`
+      );
+    }
+
     return this.prisma.bot.update({
       where: { id },
-      data: updateBotDto,
+      data: updateData,
       include: {
         user: {
           select: {

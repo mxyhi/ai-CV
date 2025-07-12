@@ -91,6 +91,15 @@ export class UpdateBotDto {
   @IsBoolean()
   isActive?: boolean;
 
+  @ApiProperty({
+    description:
+      "欢迎消息（注意：此字段会被忽略，请使用同步接口从Dify获取最新信息）",
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  welcomeMessage?: string;
+
   // 注意：name, description, avatar, welcomeMessage 等字段将从 Dify API 自动同步
   // 如需更新这些信息，请在 Dify 应用中修改，然后调用同步接口
 }

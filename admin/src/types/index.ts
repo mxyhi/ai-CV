@@ -34,7 +34,6 @@ export interface Bot {
   category: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive: boolean;
   welcomeMessage?: string;
-  temperature?: number;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -56,9 +55,7 @@ export interface CreateBotForm {
   difyBaseUrl?: string;
   category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive?: boolean;
-
   welcomeMessage?: string;
-  temperature?: number;
 }
 
 export interface UpdateBotForm {
@@ -70,7 +67,6 @@ export interface UpdateBotForm {
   category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive?: boolean;
   welcomeMessage?: string;
-  temperature?: number;
 }
 
 // 对话相关类型

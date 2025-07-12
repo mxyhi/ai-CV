@@ -7,7 +7,6 @@ import {
   Typography,
   Select,
   Switch,
-  InputNumber,
   message,
   Space,
   Upload,
@@ -68,7 +67,6 @@ const BotEdit: React.FC = () => {
         difyApiKey: bot.difyApiKey,
         difyBaseUrl: bot.difyBaseUrl,
         welcomeMessage: bot.welcomeMessage,
-        temperature: bot.temperature,
         isActive: bot.isActive,
       });
     }
