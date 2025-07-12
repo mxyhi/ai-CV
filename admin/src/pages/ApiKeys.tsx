@@ -58,8 +58,6 @@ const ApiKeys: React.FC = () => {
         botsAPI.getById(botId),
       ]);
       // 响应拦截器已经解包了数据，后端返回格式为 { data: [...], total: number }
-      console.log("API Keys 响应数据:", apiKeysData);
-      console.log("Bot 响应数据:", botData);
       setApiKeys(apiKeysData.data || []);
       setBot(botData as unknown as Bot);
     } catch (error) {

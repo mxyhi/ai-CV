@@ -5,14 +5,10 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateBotDto, UpdateBotDto } from './dto/bot.dto';
-import { ApiKeysService } from '../api-keys/api-keys.service';
 
 @Injectable()
 export class BotsService {
-  constructor(
-    private prisma: PrismaService,
-    private apiKeysService: ApiKeysService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(createBotDto: CreateBotDto, userId: string) {
     // 创建机器人
@@ -34,28 +30,7 @@ export class BotsService {
       },
     });
 
-    // 自动为新创建的机器人生成默认API密钥
-    const defaultApiKey = await this.apiKeysService.create(
-      {
-        name: '默认API密钥',
-        permissions: 'chat',
-        rateLimit: 100,
-      },
-      bot.id,
-      userId,
-      'ADMIN', // 使用管理员权限创建默认密钥
-    );
-
-    // 返回机器人信息和API密钥
-    return {
-      ...bot,
-      defaultApiKey: {
-        id: defaultApiKey.id,
-        name: defaultApiKey.name,
-        key: defaultApiKey.key, // 仅在创建时返回完整密钥
-        keyPrefix: defaultApiKey.keyPrefix,
-      },
-    };
+    return bot;
   }
 
   async findAll(userId: string, userRole: string) {
@@ -234,13 +209,5 @@ export class BotsService {
     }
 
     return bot;
-  }
-
-  async getBotApiKeys(id: string, userId: string, userRole: string) {
-    // 首先验证用户对机器人的访问权限
-    await this.findOne(id, userId, userRole);
-
-    // 获取机器人的API密钥列表
-    return this.apiKeysService.findByBot(id, userId, userRole);
   }
 }
