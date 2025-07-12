@@ -1,6 +1,10 @@
 import React from "react";
-import { Avatar, Typography } from "antd";
-import { UserOutlined, RobotOutlined } from "@ant-design/icons";
+import { Avatar, Typography, Spin } from "antd";
+import {
+  UserOutlined,
+  RobotOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import type { ChatMessage as ChatMessageType } from "../types";
 import dayjs from "dayjs";
 
@@ -13,6 +17,8 @@ interface ChatMessageProps {
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isUser = message.role === "USER";
   const isSystem = message.role === "SYSTEM";
+  const isAssistant = message.role === "ASSISTANT";
+  const isLoading = isAssistant && !message.content.trim();
 
   if (isSystem) {
     return (
@@ -78,9 +84,31 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             color: isUser ? "#fff" : "#000",
             wordBreak: "break-word",
             whiteSpace: "pre-wrap",
+            minHeight: isLoading ? "40px" : "auto",
+            display: "flex",
+            alignItems: isLoading ? "center" : "flex-start",
           }}
         >
-          <Text style={{ color: "inherit" }}>{message.content}</Text>
+          {isLoading ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                color: "#999",
+              }}
+            >
+              <Spin
+                indicator={<LoadingOutlined style={{ fontSize: 14 }} spin />}
+                size="small"
+              />
+              <Text style={{ color: "#999", fontSize: "12px" }}>
+                AI正在思考中...
+              </Text>
+            </div>
+          ) : (
+            <Text style={{ color: "inherit" }}>{message.content}</Text>
+          )}
         </div>
       </div>
     </div>
