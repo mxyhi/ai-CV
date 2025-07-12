@@ -8,7 +8,7 @@ async function main() {
 
   // 创建管理员用户
   const adminPassword = await bcrypt.hash('admin123456', 10);
-  
+
   const admin = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
     update: {},
@@ -25,7 +25,7 @@ async function main() {
 
   // 创建测试用户
   const userPassword = await bcrypt.hash('user123456', 10);
-  
+
   const user = await prisma.user.upsert({
     where: { email: 'user@example.com' },
     update: {},
@@ -79,6 +79,6 @@ main()
     console.error(e);
     process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect();
+  .finally(() => {
+    prisma.$disconnect();
   });
