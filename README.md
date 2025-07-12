@@ -17,7 +17,7 @@ pnpm i
 
 npx prisma generate
 
-pnpm run dev
+pnpm run start
 ```
 
 3. 启动 admin 后台
