@@ -33,7 +33,6 @@ export interface Bot {
   difyBaseUrl: string;
   category: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive: boolean;
-  isPublic: boolean;
   welcomeMessage?: string;
   fallbackMessage?: string;
   maxTokens?: number;
@@ -59,7 +58,7 @@ export interface CreateBotForm {
   difyBaseUrl?: string;
   category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive?: boolean;
-  isPublic?: boolean;
+
   welcomeMessage?: string;
   fallbackMessage?: string;
   maxTokens?: number;
@@ -74,7 +73,6 @@ export interface UpdateBotForm {
   difyBaseUrl?: string;
   category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive?: boolean;
-  isPublic?: boolean;
   welcomeMessage?: string;
   fallbackMessage?: string;
   maxTokens?: number;
@@ -125,6 +123,48 @@ export interface ApiResponse<T = any> {
 export interface AuthResponse {
   access_token: string;
   user: User;
+}
+
+// API Key 相关类型
+export interface ApiKey {
+  id: string;
+  name: string;
+  keyPrefix: string;
+  key?: string; // 完整密钥仅在创建时返回
+  botId: string;
+  isActive: boolean;
+  permissions: string;
+  lastUsedAt?: string;
+  usageCount: number;
+  rateLimit?: number;
+  expiresAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  bot?: {
+    id: string;
+    name: string;
+    description?: string;
+  };
+}
+
+export interface CreateApiKeyForm {
+  name: string;
+  permissions?: string;
+  rateLimit?: number;
+  expiresAt?: string;
+}
+
+export interface UpdateApiKeyForm {
+  name?: string;
+  isActive?: boolean;
+  permissions?: string;
+  rateLimit?: number;
+  expiresAt?: string;
+}
+
+export interface ApiKeyListResponse {
+  data: ApiKey[];
+  total: number;
 }
 
 // 表格分页类型

@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { BotsModule } from './bots/bots.module';
 import { DifyModule } from './dify/dify.module';
 import { ChatModule } from './chat/chat.module';
+import { ApiKeysModule } from './api-keys/api-keys.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ChatModule } from './chat/chat.module';
     BotsModule,
     DifyModule,
     ChatModule,
+    ApiKeysModule,
   ],
   controllers: [AppController],
   providers: [AppService],

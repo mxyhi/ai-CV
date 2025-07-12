@@ -3,9 +3,10 @@ import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
 import { DifyModule } from '../dify/dify.module';
 import { BotsModule } from '../bots/bots.module';
+import { ApiKeysModule } from '../api-keys/api-keys.module';
 
 @Module({
-  imports: [DifyModule, BotsModule],
+  imports: [DifyModule, BotsModule, ApiKeysModule],
   controllers: [ChatController],
   providers: [ChatService],
 })

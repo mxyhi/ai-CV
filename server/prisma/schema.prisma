@@ -67,6 +67,9 @@ model Bot {
   // 关联的知识库
   knowledgeBases BotKnowledgeBase[]
 
+  // 关联的API密钥
+  apiKeys ApiKey[]
+
   @@map("bots")
 }
 
@@ -163,6 +166,35 @@ model BotKnowledgeBase {
 
   @@unique([botId, knowledgeBaseId])
   @@map("bot_knowledge_bases")
+}
+
+// API密钥表 - 用于机器人访问认证
+model ApiKey {
+  id          String   @id @default(cuid())
+  name        String   // API密钥名称，便于管理
+  key         String   @unique // 实际的API密钥
+  keyPrefix   String   // 密钥前缀，用于快速识别（如：ak_xxx）
+
+  // 关联机器人
+  botId       String
+  bot         Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  // 权限和状态
+  isActive    Boolean  @default(true)
+  permissions String   @default("chat") // 权限范围，如：chat,admin 等
+
+  // 使用统计
+  lastUsedAt  DateTime?
+  usageCount  Int      @default(0)
+
+  // 限制配置
+  rateLimit   Int?     @default(100) // 每小时请求限制
+  expiresAt   DateTime? // 过期时间，null表示永不过期
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("api_keys")
 }
 
 // 系统配置表

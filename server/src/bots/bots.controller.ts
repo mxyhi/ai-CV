@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { BotsService } from './bots.service';
 import { CreateBotDto, UpdateBotDto, BotResponseDto } from './dto/bot.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -72,5 +77,14 @@ export class BotsController {
   @ApiResponse({ status: 403, description: '无权删除' })
   async remove(@Param('id') id: string, @User() user: any) {
     return this.botsService.remove(id, user.id, user.role);
+  }
+
+  @Get(':id/api-keys')
+  @ApiOperation({ summary: '获取机器人的API密钥列表' })
+  @ApiResponse({ status: 200, description: '获取成功' })
+  @ApiResponse({ status: 404, description: '机器人不存在' })
+  @ApiResponse({ status: 403, description: '无权访问' })
+  async getBotApiKeys(@Param('id') id: string, @User() user: any) {
+    return this.botsService.getBotApiKeys(id, user.id, user.role);
   }
 }

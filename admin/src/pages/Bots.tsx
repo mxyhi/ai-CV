@@ -105,16 +105,7 @@ const Bots: React.FC = () => {
         </Tag>
       ),
     },
-    {
-      title: "公开",
-      dataIndex: "isPublic",
-      key: "isPublic",
-      render: (isPublic: boolean) => (
-        <Tag color={isPublic ? "processing" : "default"}>
-          {isPublic ? "是" : "否"}
-        </Tag>
-      ),
-    },
+
     {
       title: "对话数",
       dataIndex: ["_count", "conversations"],

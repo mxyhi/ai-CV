@@ -80,7 +80,6 @@ const BotCreate: React.FC = () => {
           initialValues={{
             category: "CUSTOMER_SERVICE",
             isActive: true,
-            isPublic: false,
             difyBaseUrl: "http://localhost/v1",
             maxTokens: 4000,
             temperature: 0.7,
@@ -191,10 +190,6 @@ const BotCreate: React.FC = () => {
             </Form.Item>
 
             <Form.Item label="启用状态" name="isActive" valuePropName="checked">
-              <Switch />
-            </Form.Item>
-
-            <Form.Item label="公开访问" name="isPublic" valuePropName="checked">
               <Switch />
             </Form.Item>
           </div>

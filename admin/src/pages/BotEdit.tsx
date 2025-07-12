@@ -72,7 +72,6 @@ const BotEdit: React.FC = () => {
         maxTokens: bot.maxTokens,
         temperature: bot.temperature,
         isActive: bot.isActive,
-        isPublic: bot.isPublic,
       });
     }
   }, [bot, form]);
@@ -245,10 +244,6 @@ const BotEdit: React.FC = () => {
             </Form.Item>
 
             <Form.Item label="启用状态" name="isActive" valuePropName="checked">
-              <Switch />
-            </Form.Item>
-
-            <Form.Item label="公开访问" name="isPublic" valuePropName="checked">
               <Switch />
             </Form.Item>
           </div>
