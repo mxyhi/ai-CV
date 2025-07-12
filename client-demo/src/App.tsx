@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import { ConfigProvider } from "antd";
+import zhCN from "antd/locale/zh_CN";
+import { Bot } from "./types";
+import BotSelector from "./components/BotSelector";
+import ChatInterface from "./components/ChatInterface";
+import "antd/dist/reset.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
+
+  const handleSelectBot = (bot: Bot) => {
+    setSelectedBot(bot);
+  };
+
+  const handleBack = () => {
+    setSelectedBot(null);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <ConfigProvider locale={zhCN}>
+      <div style={{ height: "100vh", backgroundColor: "#f5f5f5" }}>
+        {selectedBot ? (
+          <ChatInterface bot={selectedBot} onBack={handleBack} />
+        ) : (
+          <BotSelector onSelectBot={handleSelectBot} />
+        )}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </ConfigProvider>
+  );
 }
 
-export default App
+export default App;
