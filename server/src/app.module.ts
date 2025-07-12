@@ -15,6 +15,7 @@ import { ApiKeysModule } from "./api-keys/api-keys.module";
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
     BotsModule,
