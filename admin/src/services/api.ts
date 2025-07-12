@@ -84,24 +84,4 @@ export const apiKeysAPI = {
   regenerate: (id: string) => api.post(`/api-keys/${id}/regenerate`),
 };
 
-// 聊天相关API
-export const chatAPI = {
-  startConversation: (data: {
-    botId: string;
-    userId: string;
-    userName?: string;
-    userEmail?: string;
-  }) => api.post("/chat/start", data),
-  sendMessage: (
-    conversationId: string,
-    data: { message: string; files?: any[] }
-  ) => api.post(`/chat/${conversationId}/messages`, data),
-  getHistory: (
-    conversationId: string,
-    params?: { limit?: number; offset?: number }
-  ) => api.get(`/chat/${conversationId}`, { params }),
-  closeConversation: (conversationId: string) =>
-    api.patch(`/chat/${conversationId}/close`),
-};
-
 export default api;
