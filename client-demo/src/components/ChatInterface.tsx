@@ -170,6 +170,7 @@ const ChatInterface: React.FC = () => {
 
     const decoder = new TextDecoder();
     let buffer = "";
+    let accumulatedContent = ""; // 用于累积内容
 
     try {
       while (true) {
@@ -191,12 +192,15 @@ const ChatInterface: React.FC = () => {
                   setConversationId(data.conversation_id);
                 }
 
+                // 累积内容
+                accumulatedContent += data.answer;
+
                 // 更新消息内容
                 setMessages((prev) => {
                   const newMessages = [...prev];
                   const lastMessage = newMessages[newMessages.length - 1];
                   if (lastMessage && lastMessage.id === botMessage.id) {
-                    lastMessage.content += data.answer;
+                    lastMessage.content = accumulatedContent; // 直接设置累积的内容
                   }
                   return newMessages;
                 });
