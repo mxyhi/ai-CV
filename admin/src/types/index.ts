@@ -29,7 +29,6 @@ export interface Bot {
   name: string;
   description?: string;
   avatar?: string;
-  difyAppId?: string; // 现在是可选的，因为新API不再需要
   difyApiKey: string;
   difyBaseUrl: string;
   category: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
@@ -56,7 +55,6 @@ export interface CreateBotForm {
   name: string;
   description?: string;
   avatar?: string;
-  difyAppId?: string; // 现在是可选的，因为新API不再需要
   difyApiKey: string;
   difyBaseUrl?: string;
   category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
@@ -72,7 +70,6 @@ export interface UpdateBotForm {
   name?: string;
   description?: string;
   avatar?: string;
-  difyAppId?: string; // 现在可以更新，因为是可选的
   difyApiKey?: string;
   difyBaseUrl?: string;
   category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";

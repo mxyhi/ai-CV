@@ -11,22 +11,11 @@ export class BotsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createBotDto: CreateBotDto, userId: string) {
-    // 如果提供了Dify应用ID，检查是否已存在
-    if (createBotDto.difyAppId) {
-      const existingBot = await this.prisma.bot.findUnique({
-        where: { difyAppId: createBotDto.difyAppId },
-      });
-
-      if (existingBot) {
-        throw new ForbiddenException('该Dify应用ID已被使用');
-      }
-    }
-
     return this.prisma.bot.create({
       data: {
         ...createBotDto,
         createdBy: userId,
-        difyBaseUrl: createBotDto.difyBaseUrl || 'http://localhost/v1',
+        difyBaseUrl: createBotDto.difyBaseUrl || 'http://localhost/api',
         category: createBotDto.category || 'CUSTOMER_SERVICE',
       },
       include: {
@@ -203,7 +192,6 @@ export class BotsService {
         name: true,
         description: true,
         avatar: true,
-        difyAppId: true,
         difyApiKey: true,
         difyBaseUrl: true,
         welcomeMessage: true,

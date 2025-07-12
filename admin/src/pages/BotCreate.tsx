@@ -139,14 +139,6 @@ const BotCreate: React.FC = () => {
 
             <div>
               <Form.Item
-                label="Dify 应用 ID"
-                name="difyAppId"
-                extra="可选字段，新版本 Dify API 不再强制要求应用 ID"
-              >
-                <Input placeholder="请输入 Dify 应用 ID（可选）" />
-              </Form.Item>
-
-              <Form.Item
                 label="Dify API 密钥"
                 name="difyApiKey"
                 rules={[{ required: true, message: "请输入 Dify API 密钥" }]}

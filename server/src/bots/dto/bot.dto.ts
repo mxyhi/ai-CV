@@ -24,11 +24,6 @@ export class CreateBotDto {
   @IsString()
   avatar?: string;
 
-  @ApiProperty({ description: 'Dify应用ID', required: false })
-  @IsOptional()
-  @IsString()
-  difyAppId?: string;
-
   @ApiProperty({ description: 'Dify API密钥' })
   @IsNotEmpty()
   @IsString()
@@ -95,11 +90,6 @@ export class UpdateBotDto {
   @IsString()
   avatar?: string;
 
-  @ApiProperty({ description: 'Dify应用ID', required: false })
-  @IsOptional()
-  @IsString()
-  difyAppId?: string;
-
   @ApiProperty({ description: 'Dify API密钥', required: false })
   @IsOptional()
   @IsString()
@@ -162,9 +152,6 @@ export class BotResponseDto {
 
   @ApiProperty({ description: '机器人头像URL' })
   avatar?: string;
-
-  @ApiProperty({ description: 'Dify应用ID', required: false })
-  difyAppId?: string;
 
   @ApiProperty({ description: '机器人类别' })
   category: string;
