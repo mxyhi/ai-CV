@@ -40,7 +40,7 @@ model Bot {
   avatar      String?
 
   // Dify相关配置
-  difyAppId   String    @unique // Dify应用ID
+  difyAppId   String?   @unique // Dify应用ID (可选，新API不再需要)
   difyApiKey  String    // Dify API密钥
   difyBaseUrl String    @default("http://localhost/api") // Dify API基础URL
 

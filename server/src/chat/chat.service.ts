@@ -84,7 +84,10 @@ export class ChatService {
     };
   }
 
-  async sendMessage(conversationId: string, sendMessageDto: SendChatMessageDto) {
+  async sendMessage(
+    conversationId: string,
+    sendMessageDto: SendChatMessageDto,
+  ) {
     const { message, files } = sendMessageDto;
 
     // 获取对话信息
@@ -126,7 +129,6 @@ export class ChatService {
         {
           difyApiKey: conversation.bot.difyApiKey,
           difyBaseUrl: conversation.bot.difyBaseUrl,
-          difyAppId: conversation.bot.difyAppId,
         },
       );
 
@@ -147,7 +149,9 @@ export class ChatService {
           content: difyResponse.answer,
           role: 'ASSISTANT',
           difyMessageId: difyResponse.messageId,
-          metadata: difyResponse.metadata ? JSON.stringify(difyResponse.metadata) : null,
+          metadata: difyResponse.metadata
+            ? JSON.stringify(difyResponse.metadata)
+            : null,
         },
       });
 
@@ -167,8 +171,10 @@ export class ChatService {
       };
     } catch (error) {
       // 如果Dify调用失败，返回兜底消息
-      const fallbackMessage = conversation.bot.fallbackMessage || '抱歉，我现在无法回答您的问题，请稍后再试。';
-      
+      const fallbackMessage =
+        conversation.bot.fallbackMessage ||
+        '抱歉，我现在无法回答您的问题，请稍后再试。';
+
       const botMessage = await this.prisma.message.create({
         data: {
           conversationId,

@@ -65,6 +65,7 @@ const BotEdit: React.FC = () => {
         name: bot.name,
         description: bot.description,
         category: bot.category,
+        difyAppId: bot.difyAppId,
         difyApiKey: bot.difyApiKey,
         difyBaseUrl: bot.difyBaseUrl,
         welcomeMessage: bot.welcomeMessage,
@@ -192,11 +193,12 @@ const BotEdit: React.FC = () => {
             </div>
 
             <div>
-              <Form.Item label="Dify 应用 ID">
-                <Input value={bot.difyAppId} disabled />
-                <Text type="secondary" style={{ fontSize: "12px" }}>
-                  Dify 应用 ID 不可修改
-                </Text>
+              <Form.Item
+                label="Dify 应用 ID"
+                name="difyAppId"
+                extra="可选字段，新版本 Dify API 不再强制要求应用 ID"
+              >
+                <Input placeholder="请输入 Dify 应用 ID（可选）" />
               </Form.Item>
 
               <Form.Item

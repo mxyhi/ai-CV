@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateBotDto, UpdateBotDto } from './dto/bot.dto';
 
@@ -7,13 +11,15 @@ export class BotsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createBotDto: CreateBotDto, userId: string) {
-    // 检查Dify应用ID是否已存在
-    const existingBot = await this.prisma.bot.findUnique({
-      where: { difyAppId: createBotDto.difyAppId },
-    });
+    // 如果提供了Dify应用ID，检查是否已存在
+    if (createBotDto.difyAppId) {
+      const existingBot = await this.prisma.bot.findUnique({
+        where: { difyAppId: createBotDto.difyAppId },
+      });
 
-    if (existingBot) {
-      throw new ForbiddenException('该Dify应用ID已被使用');
+      if (existingBot) {
+        throw new ForbiddenException('该Dify应用ID已被使用');
+      }
     }
 
     return this.prisma.bot.create({
@@ -104,7 +110,12 @@ export class BotsService {
     return bot;
   }
 
-  async update(id: string, updateBotDto: UpdateBotDto, userId: string, userRole: string) {
+  async update(
+    id: string,
+    updateBotDto: UpdateBotDto,
+    userId: string,
+    userRole: string,
+  ) {
     const bot = await this.prisma.bot.findUnique({
       where: { id },
     });

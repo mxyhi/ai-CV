@@ -18,7 +18,7 @@ export class DifyService {
       baseURL: baseUrl,
       timeout: 30000,
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
     });
@@ -29,7 +29,6 @@ export class DifyService {
     botConfig: {
       difyApiKey: string;
       difyBaseUrl: string;
-      difyAppId: string;
     },
   ) {
     const { message, userId, userName, conversationId, files } = sendMessageDto;
@@ -80,7 +79,10 @@ export class DifyService {
       const response = await client.get('/info');
       return response.data;
     } catch (error) {
-      console.error('Dify App Info Error:', error.response?.data || error.message);
+      console.error(
+        'Dify App Info Error:',
+        error.response?.data || error.message,
+      );
       throw new HttpException(
         `获取Dify应用信息失败: ${error.response?.data?.message || error.message}`,
         HttpStatus.BAD_REQUEST,
@@ -95,7 +97,10 @@ export class DifyService {
       const response = await client.get('/parameters');
       return response.data;
     } catch (error) {
-      console.error('Dify App Parameters Error:', error.response?.data || error.message);
+      console.error(
+        'Dify App Parameters Error:',
+        error.response?.data || error.message,
+      );
       throw new HttpException(
         `获取Dify应用参数失败: ${error.response?.data?.message || error.message}`,
         HttpStatus.BAD_REQUEST,
@@ -124,7 +129,10 @@ export class DifyService {
 
       return response.data;
     } catch (error) {
-      console.error('Dify File Upload Error:', error.response?.data || error.message);
+      console.error(
+        'Dify File Upload Error:',
+        error.response?.data || error.message,
+      );
       throw new HttpException(
         `文件上传失败: ${error.response?.data?.message || error.message}`,
         HttpStatus.BAD_REQUEST,
@@ -161,7 +169,10 @@ export class DifyService {
 
       return response.data;
     } catch (error) {
-      console.error('Dify Messages Error:', error.response?.data || error.message);
+      console.error(
+        'Dify Messages Error:',
+        error.response?.data || error.message,
+      );
       throw new HttpException(
         `获取对话消息失败: ${error.response?.data?.message || error.message}`,
         HttpStatus.BAD_REQUEST,

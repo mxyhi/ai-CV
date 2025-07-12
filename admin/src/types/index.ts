@@ -29,10 +29,10 @@ export interface Bot {
   name: string;
   description?: string;
   avatar?: string;
-  difyAppId: string;
+  difyAppId?: string; // 现在是可选的，因为新API不再需要
   difyApiKey: string;
   difyBaseUrl: string;
-  category: 'CUSTOMER_SERVICE' | 'SALES' | 'SUPPORT' | 'GENERAL';
+  category: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive: boolean;
   isPublic: boolean;
   welcomeMessage?: string;
@@ -56,10 +56,10 @@ export interface CreateBotForm {
   name: string;
   description?: string;
   avatar?: string;
-  difyAppId: string;
+  difyAppId?: string; // 现在是可选的，因为新API不再需要
   difyApiKey: string;
   difyBaseUrl?: string;
-  category?: 'CUSTOMER_SERVICE' | 'SALES' | 'SUPPORT' | 'GENERAL';
+  category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive?: boolean;
   isPublic?: boolean;
   welcomeMessage?: string;
@@ -72,9 +72,10 @@ export interface UpdateBotForm {
   name?: string;
   description?: string;
   avatar?: string;
+  difyAppId?: string; // 现在可以更新，因为是可选的
   difyApiKey?: string;
   difyBaseUrl?: string;
-  category?: 'CUSTOMER_SERVICE' | 'SALES' | 'SUPPORT' | 'GENERAL';
+  category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive?: boolean;
   isPublic?: boolean;
   welcomeMessage?: string;
@@ -91,7 +92,7 @@ export interface Conversation {
   userName?: string;
   userEmail?: string;
   title?: string;
-  status: 'ACTIVE' | 'CLOSED' | 'ARCHIVED';
+  status: "ACTIVE" | "CLOSED" | "ARCHIVED";
   difyConversationId?: string;
   createdAt: string;
   updatedAt: string;
@@ -111,7 +112,7 @@ export interface Message {
   id: string;
   conversationId: string;
   content: string;
-  role: 'USER' | 'ASSISTANT' | 'SYSTEM';
+  role: "USER" | "ASSISTANT" | "SYSTEM";
   difyMessageId?: string;
   metadata?: string;
   createdAt: string;

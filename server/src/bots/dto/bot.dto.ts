@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsNumber, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+  IsIn,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateBotDto {
@@ -17,10 +24,10 @@ export class CreateBotDto {
   @IsString()
   avatar?: string;
 
-  @ApiProperty({ description: 'Dify应用ID' })
-  @IsNotEmpty()
+  @ApiProperty({ description: 'Dify应用ID', required: false })
+  @IsOptional()
   @IsString()
-  difyAppId: string;
+  difyAppId?: string;
 
   @ApiProperty({ description: 'Dify API密钥' })
   @IsNotEmpty()
@@ -32,10 +39,10 @@ export class CreateBotDto {
   @IsString()
   difyBaseUrl?: string;
 
-  @ApiProperty({ 
-    description: '机器人类别', 
+  @ApiProperty({
+    description: '机器人类别',
     enum: ['CUSTOMER_SERVICE', 'SALES', 'SUPPORT', 'GENERAL'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsIn(['CUSTOMER_SERVICE', 'SALES', 'SUPPORT', 'GENERAL'])
@@ -88,6 +95,11 @@ export class UpdateBotDto {
   @IsString()
   avatar?: string;
 
+  @ApiProperty({ description: 'Dify应用ID', required: false })
+  @IsOptional()
+  @IsString()
+  difyAppId?: string;
+
   @ApiProperty({ description: 'Dify API密钥', required: false })
   @IsOptional()
   @IsString()
@@ -98,10 +110,10 @@ export class UpdateBotDto {
   @IsString()
   difyBaseUrl?: string;
 
-  @ApiProperty({ 
-    description: '机器人类别', 
+  @ApiProperty({
+    description: '机器人类别',
     enum: ['CUSTOMER_SERVICE', 'SALES', 'SUPPORT', 'GENERAL'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsIn(['CUSTOMER_SERVICE', 'SALES', 'SUPPORT', 'GENERAL'])
@@ -151,8 +163,8 @@ export class BotResponseDto {
   @ApiProperty({ description: '机器人头像URL' })
   avatar?: string;
 
-  @ApiProperty({ description: 'Dify应用ID' })
-  difyAppId: string;
+  @ApiProperty({ description: 'Dify应用ID', required: false })
+  difyAppId?: string;
 
   @ApiProperty({ description: '机器人类别' })
   category: string;
