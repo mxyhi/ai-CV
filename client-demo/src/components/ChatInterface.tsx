@@ -253,11 +253,17 @@ const ChatInterface: React.FC = () => {
             icon={<RobotOutlined />}
             style={{ backgroundColor: "#52c41a" }}
           />
-          <div>
-            <Title level={4} style={{ margin: 0 }}>
+          <div style={{ lineHeight: 1.2 }}>
+            <Title
+              level={4}
+              style={{ margin: 0, fontSize: "16px", lineHeight: 1.2 }}
+            >
               {config.appTitle}
             </Title>
-            <Text type="secondary" style={{ fontSize: "12px" }}>
+            <Text
+              type="secondary"
+              style={{ fontSize: "11px", lineHeight: 1.2 }}
+            >
               {appInfo?.description || "AI 智能助手"}
             </Text>
           </div>
