@@ -1,0 +1,180 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// 用户表 - 管理后台用户
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  name      String?
+  avatar    String?
+  role      String   @default("USER") // "ADMIN" 或 "USER"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联的机器人
+  bots Bot[]
+
+  @@map("users")
+}
+
+// 用户角色 - 使用字符串代替枚举（SQLite兼容）
+// 可选值: "ADMIN", "USER"
+
+// 机器人表 - 存储Dify机器人的基本信息和配置
+model Bot {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  avatar      String?
+
+  // Dify相关配置
+  difyAppId   String    @unique // Dify应用ID
+  difyApiKey  String    // Dify API密钥
+  difyBaseUrl String    @default("http://localhost/api") // Dify API基础URL
+
+  // 机器人配置
+  category    String      @default("CUSTOMER_SERVICE") // 机器人类别
+  isActive    Boolean     @default(true)
+  isPublic    Boolean     @default(false)
+
+  // 业务配置
+  welcomeMessage    String?
+  fallbackMessage   String?
+  maxTokens         Int?     @default(1000)
+  temperature       Float?   @default(0.7)
+
+  // 关联信息
+  createdBy String
+  user      User   @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联的对话
+  conversations Conversation[]
+
+  // 关联的知识库
+  knowledgeBases BotKnowledgeBase[]
+
+  @@map("bots")
+}
+
+// 机器人类别 - 使用字符串代替枚举（SQLite兼容）
+// 可选值: "CUSTOMER_SERVICE", "SALES", "SUPPORT", "GENERAL"
+
+// 对话表 - 存储用户与机器人的对话记录
+model Conversation {
+  id        String   @id @default(cuid())
+
+  // 关联机器人
+  botId     String
+  bot       Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  // 用户信息
+  userId    String   // 前端用户ID（非管理后台用户）
+  userName  String?  // 用户名称
+  userEmail String?  // 用户邮箱
+
+  // 对话信息
+  title     String?
+  status    String             @default("ACTIVE") // 对话状态
+
+  // Dify对话ID
+  difyConversationId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联的消息
+  messages Message[]
+
+  @@map("conversations")
+}
+
+// 对话状态 - 使用字符串代替枚举（SQLite兼容）
+// 可选值: "ACTIVE", "CLOSED", "ARCHIVED"
+
+// 消息表 - 存储对话中的具体消息
+model Message {
+  id        String   @id @default(cuid())
+
+  // 关联对话
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  // 消息内容
+  content   String
+  role      String // "USER", "ASSISTANT", "SYSTEM"
+
+  // Dify消息ID
+  difyMessageId String?
+
+  // 消息元数据 - 使用TEXT存储JSON字符串（SQLite兼容）
+  metadata  String?  // 存储额外信息的JSON字符串，如文件、图片等
+
+  createdAt DateTime @default(now())
+
+  @@map("messages")
+}
+
+// 消息角色 - 使用字符串代替枚举（SQLite兼容）
+// 可选值: "USER", "ASSISTANT", "SYSTEM"
+
+// 知识库表 - 管理机器人的知识库
+model KnowledgeBase {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+
+  // Dify知识库配置
+  difyDatasetId String? @unique // Dify数据集ID
+
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // 关联的机器人
+  bots BotKnowledgeBase[]
+
+  @@map("knowledge_bases")
+}
+
+// 机器人知识库关联表
+model BotKnowledgeBase {
+  id              String        @id @default(cuid())
+  botId           String
+  knowledgeBaseId String
+
+  bot             Bot           @relation(fields: [botId], references: [id], onDelete: Cascade)
+  knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime      @default(now())
+
+  @@unique([botId, knowledgeBaseId])
+  @@map("bot_knowledge_bases")
+}
+
+// 系统配置表
+model SystemConfig {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_configs")
+}
