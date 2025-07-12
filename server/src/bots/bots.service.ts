@@ -2,13 +2,17 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-} from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateBotDto, UpdateBotDto } from './dto/bot.dto';
+} from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateBotDto, UpdateBotDto } from "./dto/bot.dto";
+import { BotSyncService } from "./bot-sync.service";
 
 @Injectable()
 export class BotsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private botSyncService: BotSyncService
+  ) {}
 
   async create(createBotDto: CreateBotDto, userId: string) {
     // 创建机器人
@@ -16,8 +20,8 @@ export class BotsService {
       data: {
         ...createBotDto,
         createdBy: userId,
-        difyBaseUrl: createBotDto.difyBaseUrl || 'http://localhost/api',
-        category: createBotDto.category || 'CUSTOMER_SERVICE',
+        difyBaseUrl: createBotDto.difyBaseUrl || "http://localhost/api",
+        category: createBotDto.category || "CUSTOMER_SERVICE",
       },
       include: {
         user: {
@@ -34,7 +38,7 @@ export class BotsService {
   }
 
   async findAll(userId: string, userRole: string) {
-    const where = userRole === 'ADMIN' ? {} : { createdBy: userId };
+    const where = userRole === "ADMIN" ? {} : { createdBy: userId };
 
     return this.prisma.bot.findMany({
       where,
@@ -53,7 +57,7 @@ export class BotsService {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
   }
@@ -72,7 +76,7 @@ export class BotsService {
         conversations: {
           take: 10,
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
           include: {
             _count: {
@@ -91,12 +95,12 @@ export class BotsService {
     });
 
     if (!bot) {
-      throw new NotFoundException('机器人不存在');
+      throw new NotFoundException("机器人不存在");
     }
 
     // 检查权限
-    if (userRole !== 'ADMIN' && bot.createdBy !== userId) {
-      throw new ForbiddenException('无权访问此机器人');
+    if (userRole !== "ADMIN" && bot.createdBy !== userId) {
+      throw new ForbiddenException("无权访问此机器人");
     }
 
     return bot;
@@ -106,19 +110,19 @@ export class BotsService {
     id: string,
     updateBotDto: UpdateBotDto,
     userId: string,
-    userRole: string,
+    userRole: string
   ) {
     const bot = await this.prisma.bot.findUnique({
       where: { id },
     });
 
     if (!bot) {
-      throw new NotFoundException('机器人不存在');
+      throw new NotFoundException("机器人不存在");
     }
 
     // 检查权限
-    if (userRole !== 'ADMIN' && bot.createdBy !== userId) {
-      throw new ForbiddenException('无权修改此机器人');
+    if (userRole !== "ADMIN" && bot.createdBy !== userId) {
+      throw new ForbiddenException("无权修改此机器人");
     }
 
     return this.prisma.bot.update({
@@ -142,25 +146,26 @@ export class BotsService {
     });
 
     if (!bot) {
-      throw new NotFoundException('机器人不存在');
+      throw new NotFoundException("机器人不存在");
     }
 
     // 检查权限
-    if (userRole !== 'ADMIN' && bot.createdBy !== userId) {
-      throw new ForbiddenException('无权删除此机器人');
+    if (userRole !== "ADMIN" && bot.createdBy !== userId) {
+      throw new ForbiddenException("无权删除此机器人");
     }
 
     await this.prisma.bot.delete({
       where: { id },
     });
 
-    return { message: '机器人删除成功' };
+    return { message: "机器人删除成功" };
   }
 
   async findPublicBots() {
+    // 注意：isPublic 字段已移除，现在返回所有活跃的机器人
+    // 如果需要公开/私有功能，建议在 Dify 应用层面配置
     return this.prisma.bot.findMany({
       where: {
-        isPublic: true,
         isActive: true,
       },
       select: {
@@ -179,35 +184,28 @@ export class BotsService {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
   }
 
   async getBotForChat(id: string) {
-    const bot = await this.prisma.bot.findUnique({
-      where: {
-        id,
-        isActive: true,
-      },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        avatar: true,
-        difyApiKey: true,
-        difyBaseUrl: true,
-        welcomeMessage: true,
-        fallbackMessage: true,
-        maxTokens: true,
-        temperature: true,
-      },
-    });
+    // 使用同步服务获取最新的机器人信息
+    const bot = await this.botSyncService.getBotWithSync(id);
 
-    if (!bot) {
-      throw new NotFoundException('机器人不存在或已被禁用');
+    if (!bot || !bot.isActive) {
+      throw new NotFoundException("机器人不存在或已被禁用");
     }
 
-    return bot;
+    // 返回聊天所需的字段
+    return {
+      id: bot.id,
+      name: bot.name,
+      description: bot.description,
+      avatar: bot.avatar,
+      difyApiKey: bot.difyApiKey,
+      difyBaseUrl: bot.difyBaseUrl,
+      welcomeMessage: bot.welcomeMessage,
+    };
   }
 }

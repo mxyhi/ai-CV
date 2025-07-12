@@ -1,14 +1,20 @@
 // 客户端演示配置
 export const config = {
-  // 指定要使用的机器人ID（可以通过环境变量覆盖）
-  botId: import.meta.env.VITE_BOT_ID || "1",
+  // Dify API 转发服务基础URL
+  difyApiBaseUrl:
+    import.meta.env.VITE_DIFY_API_BASE_URL || "http://localhost:3001/v1",
 
-  // API 基础URL
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api",
+  // API Key（必须配置）
+  apiKey: import.meta.env.VITE_API_KEY || "",
 
   // 应用标题
-  appTitle: import.meta.env.VITE_APP_TITLE || "AI客服演示",
+  appTitle: import.meta.env.VITE_APP_TITLE || "AI 助手演示",
 
-  // 是否显示机器人信息
-  showBotInfo: import.meta.env.VITE_SHOW_BOT_INFO !== "false",
+  // 用户ID（用于标识用户）
+  userId:
+    import.meta.env.VITE_USER_ID ||
+    "demo-user-" + Math.random().toString(36).substr(2, 9),
+
+  // 是否启用流式响应
+  enableStreaming: import.meta.env.VITE_ENABLE_STREAMING !== "false",
 };

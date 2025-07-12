@@ -35,24 +35,20 @@ model User {
 // 机器人表 - 存储Dify机器人的基本信息和配置
 model Bot {
   id          String    @id @default(cuid())
-  name        String
-  description String?
-  avatar      String?
 
-  // Dify相关配置
+  // 基本信息 - 这些字段将从 Dify API 动态获取，但保留用于缓存和离线显示
+  name        String?   // 从 Dify /info 端点获取
+  description String?   // 从 Dify /info 端点获取
+  avatar      String?   // 从 Dify /site 端点的 icon 字段获取
+  welcomeMessage String? // 从 Dify /parameters 端点的 opening_statement 获取
+
+  // Dify相关配置 - 核心配置，必须保留
   difyApiKey  String    // Dify API密钥
   difyBaseUrl String    @default("http://localhost/v1") // Dify API基础URL
 
   // 机器人配置
   category    String      @default("CUSTOMER_SERVICE") // 机器人类别
   isActive    Boolean     @default(true)
-  isPublic    Boolean     @default(false)
-
-  // 业务配置
-  welcomeMessage    String?
-  fallbackMessage   String?
-  maxTokens         Int?     @default(1000)
-  temperature       Float?   @default(0.7)
 
   // 关联信息
   createdBy String
@@ -63,9 +59,6 @@ model Bot {
 
   // 关联的对话
   conversations Conversation[]
-
-  // 关联的知识库
-  knowledgeBases BotKnowledgeBase[]
 
   // 关联的API密钥
   apiKeys ApiKey[]
@@ -134,39 +127,8 @@ model Message {
 // 消息角色 - 使用字符串代替枚举（SQLite兼容）
 // 可选值: "USER", "ASSISTANT", "SYSTEM"
 
-// 知识库表 - 管理机器人的知识库
-model KnowledgeBase {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-
-  // Dify知识库配置
-  difyDatasetId String? @unique // Dify数据集ID
-
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // 关联的机器人
-  bots BotKnowledgeBase[]
-
-  @@map("knowledge_bases")
-}
-
-// 机器人知识库关联表
-model BotKnowledgeBase {
-  id              String        @id @default(cuid())
-  botId           String
-  knowledgeBaseId String
-
-  bot             Bot           @relation(fields: [botId], references: [id], onDelete: Cascade)
-  knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
-
-  createdAt       DateTime      @default(now())
-
-  @@unique([botId, knowledgeBaseId])
-  @@map("bot_knowledge_bases")
-}
+// 注意：知识库功能已移除，因为 Dify 有自己的知识库管理系统
+// 如果需要知识库功能，应该直接使用 Dify 的知识库 API
 
 // API密钥表 - 用于机器人访问认证
 model ApiKey {

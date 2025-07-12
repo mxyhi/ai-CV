@@ -2,52 +2,74 @@ import axios from "axios";
 import { message } from "antd";
 import { config } from "../config";
 
-// 创建axios实例
-const api = axios.create({
-  baseURL: config.apiBaseUrl,
+// 创建 Dify API 客户端
+const difyApi = axios.create({
+  baseURL: config.difyApiBaseUrl,
   timeout: 30000,
+  headers: {
+    Authorization: `Bearer ${config.apiKey}`,
+    "Content-Type": "application/json",
+  },
 });
 
 // 响应拦截器
-api.interceptors.response.use(
+difyApi.interceptors.response.use(
   (response) => {
     return response.data;
   },
   (error) => {
-    console.error("API Error:", error);
+    console.error("Dify API Error:", error);
     message.error(error.response?.data?.message || "请求失败");
     return Promise.reject(error);
   }
 );
 
-// 机器人相关API
-export const botsAPI = {
-  getPublicList: (params?: { page?: number; limit?: number }): Promise<any> =>
-    api.get("/bots/public", { params }),
-  getById: (id: string): Promise<any> => api.get(`/bots/${id}`),
+// Dify API 接口
+export const difyAPI = {
+  // 获取应用信息
+  getInfo: (): Promise<any> => difyApi.get("/info"),
+
+  // 获取应用参数
+  getParameters: (): Promise<any> => difyApi.get("/parameters"),
+
+  // 获取应用Meta信息
+  getMeta: (): Promise<any> => difyApi.get("/meta"),
+
+  // 发送消息 - 阻塞模式
+  sendMessage: (data: {
+    query: string;
+    inputs?: Record<string, any>;
+    user: string;
+    conversation_id?: string;
+    files?: any[];
+    auto_generate_name?: boolean;
+  }): Promise<any> =>
+    difyApi.post("/chat-messages", {
+      ...data,
+      response_mode: "blocking",
+    }),
+
+  // 发送消息 - 流式模式
+  sendMessageStream: (data: {
+    query: string;
+    inputs?: Record<string, any>;
+    user: string;
+    conversation_id?: string;
+    files?: any[];
+    auto_generate_name?: boolean;
+  }): Promise<Response> => {
+    return fetch(`${config.difyApiBaseUrl}/chat-messages`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${config.apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...data,
+        response_mode: "streaming",
+      }),
+    });
+  },
 };
 
-// 聊天相关API
-export const chatAPI = {
-  startConversation: (data: {
-    botId: string;
-    userId: string;
-    userName?: string;
-    userEmail?: string;
-  }): Promise<any> => api.post("/chat/start", data),
-
-  sendMessage: (
-    conversationId: string,
-    data: { message: string; files?: any[] }
-  ): Promise<any> => api.post(`/chat/${conversationId}/messages`, data),
-
-  getHistory: (
-    conversationId: string,
-    params?: { limit?: number; offset?: number }
-  ): Promise<any> => api.get(`/chat/${conversationId}`, { params }),
-
-  closeConversation: (conversationId: string): Promise<any> =>
-    api.patch(`/chat/${conversationId}/close`),
-};
-
-export default api;
+export default difyApi;

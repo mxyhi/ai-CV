@@ -78,11 +78,8 @@ const BotCreate: React.FC = () => {
           layout="vertical"
           onFinish={handleSubmit}
           initialValues={{
-            category: "CUSTOMER_SERVICE",
             isActive: true,
             difyBaseUrl: "http://localhost/v1",
-            maxTokens: 4000,
-            temperature: 0.7,
           }}
         >
           <div
@@ -105,34 +102,12 @@ const BotCreate: React.FC = () => {
                 <TextArea rows={3} placeholder="请输入机器人描述" />
               </Form.Item>
 
-              <Form.Item label="头像">
-                <Space direction="vertical" align="center">
-                  <Avatar
-                    size={80}
-                    src={avatarUrl || null}
-                    icon={<RobotOutlined />}
-                  />
-                  <Upload
-                    name="avatar"
-                    showUploadList={false}
-                    action="/api/upload"
-                    onChange={handleAvatarChange}
-                  >
-                    <Button icon={<UploadOutlined />}>上传头像</Button>
-                  </Upload>
-                  <Text type="secondary" style={{ fontSize: "12px" }}>
-                    支持 JPG、PNG 格式，建议尺寸 200x200
-                  </Text>
-                </Space>
-              </Form.Item>
-
-              <Form.Item label="类别" name="category">
-                <Select>
-                  <Option value="CUSTOMER_SERVICE">客服</Option>
-                  <Option value="SALES">销售</Option>
-                  <Option value="SUPPORT">技术支持</Option>
-                  <Option value="GENERAL">通用</Option>
-                </Select>
+              <Form.Item
+                label="启用状态"
+                name="isActive"
+                valuePropName="checked"
+              >
+                <Switch />
               </Form.Item>
             </div>
 
@@ -141,57 +116,22 @@ const BotCreate: React.FC = () => {
                 label="Dify API 密钥"
                 name="difyApiKey"
                 rules={[{ required: true, message: "请输入 Dify API 密钥" }]}
+                extra="从 Dify 应用设置中获取的 API 密钥"
               >
-                <Input.Password placeholder="请输入 Dify API 密钥" />
+                <Input.Password placeholder="app-xxxxxxxxxxxxxxxxxxxxxxxx" />
               </Form.Item>
 
-              <Form.Item label="Dify API 基础 URL" name="difyBaseUrl">
+              <Form.Item
+                label="Dify API 基础 URL"
+                name="difyBaseUrl"
+                rules={[
+                  { required: true, message: "请输入 Dify API 基础 URL" },
+                ]}
+                extra="Dify 服务的基础 URL，例如：http://localhost/v1"
+              >
                 <Input placeholder="http://localhost/v1" />
               </Form.Item>
-
-              <Form.Item label="欢迎消息" name="welcomeMessage">
-                <TextArea rows={2} placeholder="用户开始对话时的欢迎消息" />
-              </Form.Item>
-
-              <Form.Item label="兜底回复" name="fallbackMessage">
-                <TextArea
-                  rows={2}
-                  placeholder="当机器人无法理解用户意图时的回复"
-                />
-              </Form.Item>
             </div>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr 1fr",
-              gap: "24px",
-              marginTop: "24px",
-            }}
-          >
-            <Form.Item label="最大令牌数" name="maxTokens">
-              <InputNumber
-                min={100}
-                max={8000}
-                style={{ width: "100%" }}
-                placeholder="4000"
-              />
-            </Form.Item>
-
-            <Form.Item label="温度参数" name="temperature">
-              <InputNumber
-                min={0}
-                max={2}
-                step={0.1}
-                style={{ width: "100%" }}
-                placeholder="0.7"
-              />
-            </Form.Item>
-
-            <Form.Item label="启用状态" name="isActive" valuePropName="checked">
-              <Switch />
-            </Form.Item>
           </div>
 
           <Form.Item style={{ marginTop: "32px" }}>
