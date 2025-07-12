@@ -68,8 +68,6 @@ const BotEdit: React.FC = () => {
         difyApiKey: bot.difyApiKey,
         difyBaseUrl: bot.difyBaseUrl,
         welcomeMessage: bot.welcomeMessage,
-        fallbackMessage: bot.fallbackMessage,
-        maxTokens: bot.maxTokens,
         temperature: bot.temperature,
         isActive: bot.isActive,
       });
@@ -206,13 +204,6 @@ const BotEdit: React.FC = () => {
               <Form.Item label="欢迎消息" name="welcomeMessage">
                 <TextArea rows={2} placeholder="用户开始对话时的欢迎消息" />
               </Form.Item>
-
-              <Form.Item label="兜底回复" name="fallbackMessage">
-                <TextArea
-                  rows={2}
-                  placeholder="当机器人无法理解用户意图时的回复"
-                />
-              </Form.Item>
             </div>
           </div>
 
@@ -224,25 +215,6 @@ const BotEdit: React.FC = () => {
               marginTop: "24px",
             }}
           >
-            <Form.Item label="最大令牌数" name="maxTokens">
-              <InputNumber
-                min={100}
-                max={8000}
-                style={{ width: "100%" }}
-                placeholder="4000"
-              />
-            </Form.Item>
-
-            <Form.Item label="温度参数" name="temperature">
-              <InputNumber
-                min={0}
-                max={2}
-                step={0.1}
-                style={{ width: "100%" }}
-                placeholder="0.7"
-              />
-            </Form.Item>
-
             <Form.Item label="启用状态" name="isActive" valuePropName="checked">
               <Switch />
             </Form.Item>

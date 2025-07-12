@@ -34,8 +34,6 @@ export interface Bot {
   category: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive: boolean;
   welcomeMessage?: string;
-  fallbackMessage?: string;
-  maxTokens?: number;
   temperature?: number;
   createdBy: string;
   createdAt: string;
@@ -60,8 +58,6 @@ export interface CreateBotForm {
   isActive?: boolean;
 
   welcomeMessage?: string;
-  fallbackMessage?: string;
-  maxTokens?: number;
   temperature?: number;
 }
 
@@ -74,8 +70,6 @@ export interface UpdateBotForm {
   category?: "CUSTOMER_SERVICE" | "SALES" | "SUPPORT" | "GENERAL";
   isActive?: boolean;
   welcomeMessage?: string;
-  fallbackMessage?: string;
-  maxTokens?: number;
   temperature?: number;
 }
 
