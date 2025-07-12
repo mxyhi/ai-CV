@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ConfigProvider } from "antd";
 import zhCN from "antd/locale/zh_CN";
-import { Bot } from "./types";
+import type { Bot } from "./types";
 import BotSelector from "./components/BotSelector";
 import ChatInterface from "./components/ChatInterface";
 import "antd/dist/reset.css";

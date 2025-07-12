@@ -1,9 +1,9 @@
-import axios from 'axios';
-import { message } from 'antd';
+import axios from "axios";
+import { message } from "antd";
 
 // 创建axios实例
 const api = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: "http://localhost:3001",
   timeout: 30000,
 });
 
@@ -13,34 +13,39 @@ api.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    console.error('API Error:', error);
-    message.error(error.response?.data?.message || '请求失败');
+    console.error("API Error:", error);
+    message.error(error.response?.data?.message || "请求失败");
     return Promise.reject(error);
   }
 );
 
 // 机器人相关API
 export const botsAPI = {
-  getPublicList: () => api.get('/bots/public'),
-  getById: (id: string) => api.get(`/bots/${id}`),
+  getPublicList: (params?: { page?: number; limit?: number }): Promise<any> =>
+    api.get("/bots/public", { params }),
+  getById: (id: string): Promise<any> => api.get(`/bots/${id}`),
 };
 
 // 聊天相关API
 export const chatAPI = {
-  startConversation: (data: { 
-    botId: string; 
-    userId: string; 
-    userName?: string; 
-    userEmail?: string 
-  }) => api.post('/chat/start', data),
-  
-  sendMessage: (conversationId: string, data: { message: string; files?: any[] }) =>
-    api.post(`/chat/${conversationId}/messages`, data),
-    
-  getHistory: (conversationId: string, params?: { limit?: number; offset?: number }) =>
-    api.get(`/chat/${conversationId}`, { params }),
-    
-  closeConversation: (conversationId: string) =>
+  startConversation: (data: {
+    botId: string;
+    userId: string;
+    userName?: string;
+    userEmail?: string;
+  }): Promise<any> => api.post("/chat/start", data),
+
+  sendMessage: (
+    conversationId: string,
+    data: { message: string; files?: any[] }
+  ): Promise<any> => api.post(`/chat/${conversationId}/messages`, data),
+
+  getHistory: (
+    conversationId: string,
+    params?: { limit?: number; offset?: number }
+  ): Promise<any> => api.get(`/chat/${conversationId}`, { params }),
+
+  closeConversation: (conversationId: string): Promise<any> =>
     api.patch(`/chat/${conversationId}/close`),
 };
 

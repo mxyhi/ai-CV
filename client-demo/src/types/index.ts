@@ -14,7 +14,7 @@ export interface Bot {
 }
 
 // 对话相关类型
-export interface Conversation {
+export interface StartConversationResponse {
   conversationId: string;
   bot: {
     id: string;
@@ -28,7 +28,7 @@ export interface Conversation {
 export interface Message {
   id: string;
   content: string;
-  role: 'USER' | 'ASSISTANT' | 'SYSTEM';
+  role: "USER" | "ASSISTANT" | "SYSTEM";
   createdAt: string;
   metadata?: any;
 }
@@ -37,7 +37,7 @@ export interface Message {
 export interface ChatMessage {
   id: string;
   content: string;
-  role: 'USER' | 'ASSISTANT' | 'SYSTEM';
+  role: "USER" | "ASSISTANT" | "SYSTEM";
   timestamp: Date;
   avatar?: string;
   userName?: string;
@@ -70,4 +70,12 @@ export interface ApiResponse<T = any> {
   data?: T;
   message?: string;
   success?: boolean;
+}
+
+// 分页响应类型
+export interface PaginatedResponse<T = any> {
+  data: T[];
+  total: number;
+  page?: number;
+  limit?: number;
 }

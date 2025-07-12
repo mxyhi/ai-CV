@@ -1,10 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Layout, Typography, Button, Avatar, Space, message } from 'antd';
-import { ArrowLeftOutlined, RobotOutlined } from '@ant-design/icons';
-import { Bot, ChatMessage as ChatMessageType, Conversation } from '../types';
-import { chatAPI } from '../services/api';
-import ChatMessage from './ChatMessage';
-import ChatInput from './ChatInput';
+import React, { useState, useEffect, useRef } from "react";
+import { Layout, Typography, Button, Avatar, Space, message } from "antd";
+import { ArrowLeftOutlined, RobotOutlined } from "@ant-design/icons";
+import type {
+  Bot,
+  ChatMessage as ChatMessageType,
+  StartConversationResponse,
+  SendMessageResponse,
+} from "../types";
+import { chatAPI } from "../services/api";
+import ChatMessage from "./ChatMessage";
+import ChatInput from "./ChatInput";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -16,14 +21,16 @@ interface ChatInterfaceProps {
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
-  const [conversationId, setConversationId] = useState<string>('');
+  const [conversationId, setConversationId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // 生成用户ID（实际项目中应该从用户系统获取）
-  const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  const userName = '访客';
+  const userId = `user_${Date.now()}_${Math.random()
+    .toString(36)
+    .substr(2, 9)}`;
+  const userName = "访客";
 
   useEffect(() => {
     initializeConversation();
@@ -34,35 +41,38 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
   }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const initializeConversation = async () => {
     try {
       setInitializing(true);
-      const response: Conversation = await chatAPI.startConversation({
-        botId: bot.id,
-        userId,
-        userName,
-      });
+      const response: StartConversationResponse =
+        await chatAPI.startConversation({
+          botId: bot.id,
+          userId,
+          userName,
+        });
 
       setConversationId(response.conversationId);
 
       // 转换消息格式
-      const chatMessages: ChatMessageType[] = response.messages.map(msg => ({
-        id: msg.id,
-        content: msg.content,
-        role: msg.role,
-        timestamp: new Date(msg.createdAt),
-        avatar: msg.role === 'ASSISTANT' ? bot.avatar : undefined,
-        userName: msg.role === 'USER' ? userName : undefined,
-        botName: msg.role === 'ASSISTANT' ? bot.name : undefined,
-      }));
+      const chatMessages: ChatMessageType[] = response.messages.map(
+        (msg: any) => ({
+          id: msg.id,
+          content: msg.content,
+          role: msg.role,
+          timestamp: new Date(msg.createdAt),
+          avatar: msg.role === "ASSISTANT" ? bot.avatar : undefined,
+          userName: msg.role === "USER" ? userName : undefined,
+          botName: msg.role === "ASSISTANT" ? bot.name : undefined,
+        })
+      );
 
       setMessages(chatMessages);
     } catch (error) {
-      message.error('初始化对话失败');
-      console.error('Failed to initialize conversation:', error);
+      message.error("初始化对话失败");
+      console.error("Failed to initialize conversation:", error);
     } finally {
       setInitializing(false);
     }
@@ -70,7 +80,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
 
   const handleSendMessage = async (messageContent: string) => {
     if (!conversationId) {
-      message.error('对话未初始化');
+      message.error("对话未初始化");
       return;
     }
 
@@ -78,18 +88,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
     const userMessage: ChatMessageType = {
       id: `temp_${Date.now()}`,
       content: messageContent,
-      role: 'USER',
+      role: "USER",
       timestamp: new Date(),
       userName,
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
     try {
-      const response = await chatAPI.sendMessage(conversationId, {
-        message: messageContent,
-      });
+      const response: SendMessageResponse = await chatAPI.sendMessage(
+        conversationId,
+        {
+          message: messageContent,
+        }
+      );
 
       // 更新用户消息ID
       const updatedUserMessage: ChatMessageType = {
@@ -102,16 +115,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
       const botMessage: ChatMessageType = {
         id: response.botMessage.id,
         content: response.botMessage.content,
-        role: 'ASSISTANT',
+        role: "ASSISTANT",
         timestamp: new Date(response.botMessage.createdAt),
         avatar: bot.avatar,
         botName: bot.name,
       };
 
-      setMessages(prev => {
+      setMessages((prev) => {
         const newMessages = [...prev];
         // 替换临时用户消息
-        const tempIndex = newMessages.findIndex(msg => msg.id === userMessage.id);
+        const tempIndex = newMessages.findIndex(
+          (msg) => msg.id === userMessage.id
+        );
         if (tempIndex !== -1) {
           newMessages[tempIndex] = updatedUserMessage;
         }
@@ -121,69 +136,73 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
       });
 
       if (response.error) {
-        message.warning('机器人回复可能不完整，请重试');
+        message.warning("机器人回复可能不完整，请重试");
       }
     } catch (error) {
-      message.error('发送消息失败');
-      console.error('Failed to send message:', error);
-      
+      message.error("发送消息失败");
+      console.error("Failed to send message:", error);
+
       // 移除失败的用户消息
-      setMessages(prev => prev.filter(msg => msg.id !== userMessage.id));
+      setMessages((prev) => prev.filter((msg) => msg.id !== userMessage.id));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Layout style={{ height: '100vh' }}>
-      <Header style={{
-        backgroundColor: '#fff',
-        borderBottom: '1px solid #f0f0f0',
-        padding: '0 16px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}>
+    <Layout style={{ height: "100vh" }}>
+      <Header
+        style={{
+          backgroundColor: "#fff",
+          borderBottom: "1px solid #f0f0f0",
+          padding: "0 16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Space>
-          <Button
-            type="text"
-            icon={<ArrowLeftOutlined />}
-            onClick={onBack}
-          >
+          <Button type="text" icon={<ArrowLeftOutlined />} onClick={onBack}>
             返回
           </Button>
           <Avatar
             src={bot.avatar}
             icon={<RobotOutlined />}
-            style={{ backgroundColor: '#52c41a' }}
+            style={{ backgroundColor: "#52c41a" }}
           />
           <div>
             <Title level={4} style={{ margin: 0 }}>
               {bot.name}
             </Title>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
-              {bot.description || 'AI智能客服'}
+            <Text type="secondary" style={{ fontSize: "12px" }}>
+              {bot.description || "AI智能客服"}
             </Text>
           </div>
         </Space>
       </Header>
 
-      <Content style={{
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#f5f5f5',
-      }}>
-        <div style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '16px',
-        }}>
+      <Content
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#f5f5f5",
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            padding: "16px",
+          }}
+        >
           {initializing ? (
-            <div style={{
-              textAlign: 'center',
-              padding: '50px',
-              color: '#999',
-            }}>
+            <div
+              style={{
+                textAlign: "center",
+                padding: "50px",
+                color: "#999",
+              }}
+            >
               正在初始化对话...
             </div>
           ) : (
