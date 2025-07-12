@@ -81,7 +81,7 @@ const BotCreate: React.FC = () => {
             category: "CUSTOMER_SERVICE",
             isActive: true,
             isPublic: false,
-            difyBaseUrl: "http://localhost/api",
+            difyBaseUrl: "http://localhost/v1",
             maxTokens: 4000,
             temperature: 0.7,
           }}
@@ -155,7 +155,7 @@ const BotCreate: React.FC = () => {
               </Form.Item>
 
               <Form.Item label="Dify API 基础 URL" name="difyBaseUrl">
-                <Input placeholder="http://localhost/api" />
+                <Input placeholder="http://localhost/v1" />
               </Form.Item>
 
               <Form.Item label="欢迎消息" name="welcomeMessage">

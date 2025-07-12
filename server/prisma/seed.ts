@@ -49,7 +49,7 @@ async function main() {
     },
     {
       key: 'DEFAULT_DIFY_BASE_URL',
-      value: 'http://localhost/api',
+      value: 'http://localhost/v1',
       description: '默认Dify API基础URL',
     },
     {

@@ -210,7 +210,7 @@ const BotEdit: React.FC = () => {
               </Form.Item>
 
               <Form.Item label="Dify API 基础 URL" name="difyBaseUrl">
-                <Input placeholder="http://localhost/api" />
+                <Input placeholder="http://localhost/v1" />
               </Form.Item>
 
               <Form.Item label="欢迎消息" name="welcomeMessage">

@@ -26,7 +26,7 @@ export class BotsService {
       data: {
         ...createBotDto,
         createdBy: userId,
-        difyBaseUrl: createBotDto.difyBaseUrl || 'http://localhost/api',
+        difyBaseUrl: createBotDto.difyBaseUrl || 'http://localhost/v1',
         category: createBotDto.category || 'CUSTOMER_SERVICE',
       },
       include: {

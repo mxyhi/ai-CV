@@ -42,7 +42,7 @@ model Bot {
   // Dify相关配置
   difyAppId   String?   @unique // Dify应用ID (可选，新API不再需要)
   difyApiKey  String    // Dify API密钥
-  difyBaseUrl String    @default("http://localhost/api") // Dify API基础URL
+  difyBaseUrl String    @default("http://localhost/v1") // Dify API基础URL
 
   // 机器人配置
   category    String      @default("CUSTOMER_SERVICE") // 机器人类别

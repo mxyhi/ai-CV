@@ -20,7 +20,7 @@ CREATE TABLE "bots" (
     "avatar" TEXT,
     "difyAppId" TEXT,
     "difyApiKey" TEXT NOT NULL,
-    "difyBaseUrl" TEXT NOT NULL DEFAULT 'http://localhost/api',
+    "difyBaseUrl" TEXT NOT NULL DEFAULT 'http://localhost/v1',
     "category" TEXT NOT NULL DEFAULT 'CUSTOMER_SERVICE',
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "isPublic" BOOLEAN NOT NULL DEFAULT false,
