@@ -1,10 +1,10 @@
 // 客户端演示配置
 export const config = {
-  // Dify API 转发服务基础URL
-  difyApiBaseUrl:
-    import.meta.env.VITE_DIFY_API_BASE_URL || "http://localhost:3001/v1",
+  // Server API 基础URL（通过 server 的 Dify 代理）
+  serverApiBaseUrl:
+    import.meta.env.VITE_SERVER_API_BASE_URL || "http://localhost:3001/v1",
 
-  // API Key（必须配置）
+  // API Key（必须配置，用于访问 server 的 Dify 代理）
   apiKey: import.meta.env.VITE_API_KEY || "",
 
   // 应用标题
