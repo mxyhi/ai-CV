@@ -3,11 +3,10 @@ import { Row, Col, Card, Statistic, Typography, Space, Spin } from "antd";
 import {
   RobotOutlined,
   MessageOutlined,
-  UserOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
 import { botsAPI } from "../services/api";
-import { Bot } from "../types";
+import type { Bot } from "../types";
 
 const { Title } = Typography;
 
@@ -19,7 +18,7 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         const botsData = await botsAPI.getList();
-        setBots(botsData);
+        setBots(botsData as unknown as Bot[]);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
       } finally {

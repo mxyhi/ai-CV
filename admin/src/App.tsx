@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import zhCN from "antd/locale/zh_CN";
@@ -10,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Bots from "./pages/Bots";
 import BotCreate from "./pages/BotCreate";
 import BotEdit from "./pages/BotEdit";
+import ApiKeys from "./pages/ApiKeys";
 import "antd/dist/reset.css";
 
 function App() {
@@ -31,6 +31,7 @@ function App() {
               <Route path="bots" element={<Bots />} />
               <Route path="bots/create" element={<BotCreate />} />
               <Route path="bots/:id/edit" element={<BotEdit />} />
+              <Route path="bots/:botId/api-keys" element={<ApiKeys />} />
             </Route>
           </Routes>
         </Router>

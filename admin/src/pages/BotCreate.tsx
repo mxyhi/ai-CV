@@ -21,7 +21,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { botsAPI } from "../services/api";
-import { CreateBotForm } from "../types";
+import type { CreateBotForm } from "../types";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;

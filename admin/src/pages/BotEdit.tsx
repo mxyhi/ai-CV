@@ -22,7 +22,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { botsAPI } from "../services/api";
-import { Bot, UpdateBotForm } from "../types";
+import type { Bot, UpdateBotForm } from "../types";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -47,7 +47,7 @@ const BotEdit: React.FC = () => {
 
     try {
       setPageLoading(true);
-      const data = await botsAPI.getById(id);
+      const data = (await botsAPI.getById(id)) as unknown as Bot;
       setBot(data);
       setAvatarUrl(data.avatar || "");
     } catch (error: any) {

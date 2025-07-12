@@ -69,10 +69,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   ): Promise<boolean> => {
     try {
       setLoading(true);
-      const response: AuthResponse = await authAPI.login({
+      const response = (await authAPI.login({
         identifier,
         password,
-      });
+      })) as unknown as AuthResponse;
 
       setToken(response.access_token);
       setUser(response.user);

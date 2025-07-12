@@ -15,11 +15,11 @@ import {
   EditOutlined,
   DeleteOutlined,
   RobotOutlined,
-  EyeOutlined,
+  KeyOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { botsAPI } from "../services/api";
-import { Bot } from "../types";
+import type { Bot } from "../types";
 import dayjs from "dayjs";
 
 const { Title } = Typography;
@@ -33,7 +33,7 @@ const Bots: React.FC = () => {
     try {
       setLoading(true);
       const data = await botsAPI.getList();
-      setBots(data);
+      setBots(data as unknown as Bot[]);
     } catch (error) {
       message.error("获取机器人列表失败");
     } finally {
@@ -121,9 +121,9 @@ const Bots: React.FC = () => {
     {
       title: "操作",
       key: "action",
-      width: 120,
+      width: 180,
       render: (_: any, record: Bot) => (
-        <Space size="small" wrap style={{ maxWidth: 120 }}>
+        <Space size="small" wrap style={{ maxWidth: 180 }}>
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -131,6 +131,14 @@ const Bots: React.FC = () => {
             size="small"
           >
             编辑
+          </Button>
+          <Button
+            type="link"
+            icon={<KeyOutlined />}
+            onClick={() => navigate(`/bots/${record.id}/api-keys`)}
+            size="small"
+          >
+            API密钥
           </Button>
           <Popconfirm
             title="确定要删除这个机器人吗？"
