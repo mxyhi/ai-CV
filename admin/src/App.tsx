@@ -8,6 +8,8 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Bots from "./pages/Bots";
+import BotCreate from "./pages/BotCreate";
+import BotEdit from "./pages/BotEdit";
 import "antd/dist/reset.css";
 
 function App() {
@@ -27,6 +29,8 @@ function App() {
             >
               <Route index element={<Dashboard />} />
               <Route path="bots" element={<Bots />} />
+              <Route path="bots/create" element={<BotCreate />} />
+              <Route path="bots/:id/edit" element={<BotEdit />} />
             </Route>
           </Routes>
         </Router>
