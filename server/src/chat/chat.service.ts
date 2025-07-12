@@ -2,18 +2,18 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-} from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { DifyService } from '../dify/dify.service';
-import { BotsService } from '../bots/bots.service';
-import { StartChatDto, SendChatMessageDto } from './dto/chat.dto';
+} from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { DifyService } from "../dify/dify.service";
+import { BotsService } from "../bots/bots.service";
+import { StartChatDto, SendChatMessageDto } from "./dto/chat.dto";
 
 @Injectable()
 export class ChatService {
   constructor(
     private prisma: PrismaService,
     private difyService: DifyService,
-    private botsService: BotsService,
+    private botsService: BotsService
   ) {}
 
   async startConversation(startChatDto: StartChatDto) {
@@ -27,7 +27,7 @@ export class ChatService {
       where: {
         botId,
         userId,
-        status: 'ACTIVE',
+        status: "ACTIVE",
       },
       include: {
         bot: {
@@ -40,7 +40,7 @@ export class ChatService {
         },
         messages: {
           orderBy: {
-            createdAt: 'asc',
+            createdAt: "asc",
           },
         },
       },
@@ -54,7 +54,7 @@ export class ChatService {
           userId,
           userName,
           userEmail,
-          status: 'ACTIVE',
+          status: "ACTIVE",
         },
         include: {
           bot: {
@@ -75,7 +75,7 @@ export class ChatService {
           data: {
             conversationId: conversation.id,
             content: bot.welcomeMessage,
-            role: 'ASSISTANT',
+            role: "ASSISTANT",
           },
         });
       }
@@ -90,7 +90,7 @@ export class ChatService {
 
   async sendMessage(
     conversationId: string,
-    sendMessageDto: SendChatMessageDto,
+    sendMessageDto: SendChatMessageDto
   ) {
     const { message, files } = sendMessageDto;
 
@@ -103,11 +103,11 @@ export class ChatService {
     });
 
     if (!conversation) {
-      throw new NotFoundException('对话不存在');
+      throw new NotFoundException("对话不存在");
     }
 
-    if (conversation.status !== 'ACTIVE') {
-      throw new NotFoundException('对话已关闭');
+    if (conversation.status !== "ACTIVE") {
+      throw new NotFoundException("对话已关闭");
     }
 
     // 保存用户消息
@@ -115,7 +115,7 @@ export class ChatService {
       data: {
         conversationId,
         content: message,
-        role: 'USER',
+        role: "USER",
         metadata: files ? JSON.stringify({ files }) : null,
       },
     });
@@ -133,7 +133,7 @@ export class ChatService {
         {
           difyApiKey: conversation.bot.difyApiKey,
           difyBaseUrl: conversation.bot.difyBaseUrl,
-        },
+        }
       );
 
       // 更新对话的Dify对话ID
@@ -151,7 +151,7 @@ export class ChatService {
         data: {
           conversationId,
           content: difyResponse.answer,
-          role: 'ASSISTANT',
+          role: "ASSISTANT",
           difyMessageId: difyResponse.messageId,
           metadata: difyResponse.metadata
             ? JSON.stringify(difyResponse.metadata)
@@ -175,15 +175,13 @@ export class ChatService {
       };
     } catch (error) {
       // 如果Dify调用失败，返回兜底消息
-      const fallbackMessage =
-        conversation.bot.fallbackMessage ||
-        '抱歉，我现在无法回答您的问题，请稍后再试。';
+      const fallbackMessage = "抱歉，我现在无法回答您的问题，请稍后再试。";
 
       const botMessage = await this.prisma.message.create({
         data: {
           conversationId,
           content: fallbackMessage,
-          role: 'ASSISTANT',
+          role: "ASSISTANT",
         },
       });
 
@@ -218,7 +216,7 @@ export class ChatService {
         },
         messages: {
           orderBy: {
-            createdAt: 'asc',
+            createdAt: "asc",
           },
           skip: offset,
           take: limit,
@@ -227,7 +225,7 @@ export class ChatService {
     });
 
     if (!conversation) {
-      throw new NotFoundException('对话不存在');
+      throw new NotFoundException("对话不存在");
     }
 
     return conversation;
@@ -239,30 +237,30 @@ export class ChatService {
     });
 
     if (!conversation) {
-      throw new NotFoundException('对话不存在');
+      throw new NotFoundException("对话不存在");
     }
 
     await this.prisma.conversation.update({
       where: { id: conversationId },
       data: {
-        status: 'CLOSED',
+        status: "CLOSED",
       },
     });
 
-    return { message: '对话已关闭' };
+    return { message: "对话已关闭" };
   }
 
   // API Key 认证版本的方法
   async startConversationWithApiKey(
     startChatDto: StartChatDto,
     bot: any,
-    apiKey: any,
+    apiKey: any
   ) {
     const { userId, userName, userEmail } = startChatDto;
 
     // 验证权限
-    if (!apiKey.permissions.includes('chat')) {
-      throw new ForbiddenException('API密钥没有聊天权限');
+    if (!apiKey.permissions.includes("chat")) {
+      throw new ForbiddenException("API密钥没有聊天权限");
     }
 
     // 检查是否已有活跃对话
@@ -270,7 +268,7 @@ export class ChatService {
       where: {
         botId: bot.id,
         userId,
-        status: 'ACTIVE',
+        status: "ACTIVE",
       },
       include: {
         bot: {
@@ -283,7 +281,7 @@ export class ChatService {
         },
         messages: {
           orderBy: {
-            createdAt: 'asc',
+            createdAt: "asc",
           },
         },
       },
@@ -297,7 +295,7 @@ export class ChatService {
           userId,
           userName,
           userEmail,
-          status: 'ACTIVE',
+          status: "ACTIVE",
         },
         include: {
           bot: {
@@ -318,7 +316,7 @@ export class ChatService {
           data: {
             conversationId: conversation.id,
             content: bot.welcomeMessage,
-            role: 'ASSISTANT',
+            role: "ASSISTANT",
           },
         });
       }
@@ -335,11 +333,11 @@ export class ChatService {
     conversationId: string,
     sendMessageDto: SendChatMessageDto,
     bot: any,
-    apiKey: any,
+    apiKey: any
   ) {
     // 验证权限
-    if (!apiKey.permissions.includes('chat')) {
-      throw new ForbiddenException('API密钥没有聊天权限');
+    if (!apiKey.permissions.includes("chat")) {
+      throw new ForbiddenException("API密钥没有聊天权限");
     }
 
     const { message, files } = sendMessageDto;
@@ -353,16 +351,16 @@ export class ChatService {
     });
 
     if (!conversation) {
-      throw new NotFoundException('对话不存在');
+      throw new NotFoundException("对话不存在");
     }
 
-    if (conversation.status !== 'ACTIVE') {
-      throw new NotFoundException('对话已关闭');
+    if (conversation.status !== "ACTIVE") {
+      throw new NotFoundException("对话已关闭");
     }
 
     // 验证对话是否属于当前API密钥的机器人
     if (conversation.botId !== bot.id) {
-      throw new ForbiddenException('无权访问此对话');
+      throw new ForbiddenException("无权访问此对话");
     }
 
     // 保存用户消息
@@ -370,7 +368,7 @@ export class ChatService {
       data: {
         conversationId,
         content: message,
-        role: 'USER',
+        role: "USER",
         metadata: files ? JSON.stringify({ files }) : null,
       },
     });
@@ -388,7 +386,7 @@ export class ChatService {
         {
           difyApiKey: bot.difyApiKey,
           difyBaseUrl: bot.difyBaseUrl,
-        },
+        }
       );
 
       // 更新对话的Dify对话ID
@@ -406,7 +404,7 @@ export class ChatService {
         data: {
           conversationId,
           content: difyResponse.answer,
-          role: 'ASSISTANT',
+          role: "ASSISTANT",
           difyMessageId: difyResponse.messageId,
           metadata: difyResponse.metadata
             ? JSON.stringify(difyResponse.metadata)
@@ -431,13 +429,13 @@ export class ChatService {
     } catch (error) {
       // 如果Dify调用失败，返回兜底消息
       const fallbackMessage =
-        bot.fallbackMessage || '抱歉，我现在无法回答您的问题，请稍后再试。';
+        bot.fallbackMessage || "抱歉，我现在无法回答您的问题，请稍后再试。";
 
       const botMessage = await this.prisma.message.create({
         data: {
           conversationId,
           content: fallbackMessage,
-          role: 'ASSISTANT',
+          role: "ASSISTANT",
         },
       });
 
@@ -464,11 +462,11 @@ export class ChatService {
     limit = 50,
     offset = 0,
     bot: any,
-    apiKey: any,
+    apiKey: any
   ) {
     // 验证权限
-    if (!apiKey.permissions.includes('chat')) {
-      throw new ForbiddenException('API密钥没有聊天权限');
+    if (!apiKey.permissions.includes("chat")) {
+      throw new ForbiddenException("API密钥没有聊天权限");
     }
 
     const conversation = await this.prisma.conversation.findUnique({
@@ -483,7 +481,7 @@ export class ChatService {
         },
         messages: {
           orderBy: {
-            createdAt: 'asc',
+            createdAt: "asc",
           },
           skip: offset,
           take: limit,
@@ -492,12 +490,12 @@ export class ChatService {
     });
 
     if (!conversation) {
-      throw new NotFoundException('对话不存在');
+      throw new NotFoundException("对话不存在");
     }
 
     // 验证对话是否属于当前API密钥的机器人
     if (conversation.botId !== bot.id) {
-      throw new ForbiddenException('无权访问此对话');
+      throw new ForbiddenException("无权访问此对话");
     }
 
     return conversation;
@@ -506,11 +504,11 @@ export class ChatService {
   async closeConversationWithApiKey(
     conversationId: string,
     bot: any,
-    apiKey: any,
+    apiKey: any
   ) {
     // 验证权限
-    if (!apiKey.permissions.includes('chat')) {
-      throw new ForbiddenException('API密钥没有聊天权限');
+    if (!apiKey.permissions.includes("chat")) {
+      throw new ForbiddenException("API密钥没有聊天权限");
     }
 
     const conversation = await this.prisma.conversation.findUnique({
@@ -518,21 +516,21 @@ export class ChatService {
     });
 
     if (!conversation) {
-      throw new NotFoundException('对话不存在');
+      throw new NotFoundException("对话不存在");
     }
 
     // 验证对话是否属于当前API密钥的机器人
     if (conversation.botId !== bot.id) {
-      throw new ForbiddenException('无权访问此对话');
+      throw new ForbiddenException("无权访问此对话");
     }
 
     await this.prisma.conversation.update({
       where: { id: conversationId },
       data: {
-        status: 'CLOSED',
+        status: "CLOSED",
       },
     });
 
-    return { message: '对话已关闭' };
+    return { message: "对话已关闭" };
   }
 }

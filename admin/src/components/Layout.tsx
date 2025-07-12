@@ -41,11 +41,6 @@ const Layout: React.FC = () => {
       icon: <RobotOutlined />,
       label: "机器人管理",
     },
-    {
-      key: "/conversations",
-      icon: <MessageOutlined />,
-      label: "对话记录",
-    },
   ];
 
   const userMenuItems = [
