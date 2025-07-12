@@ -15,12 +15,12 @@ export class SendMessageDto {
   @ApiProperty({ description: '用户名称', required: false })
   @IsOptional()
   @IsString()
-  userName?: string;
+  userName?: string | null;
 
   @ApiProperty({ description: '对话ID', required: false })
   @IsOptional()
   @IsString()
-  conversationId?: string;
+  conversationId?: string | null;
 
   @ApiProperty({ description: '文件列表', required: false })
   @IsOptional()
