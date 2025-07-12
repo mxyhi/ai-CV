@@ -57,10 +57,14 @@ const ApiKeys: React.FC = () => {
         apiKeysAPI.getByBot(botId),
         botsAPI.getById(botId),
       ]);
+      // 响应拦截器已经解包了数据，后端返回格式为 { data: [...], total: number }
+      console.log("API Keys 响应数据:", apiKeysData);
+      console.log("Bot 响应数据:", botData);
       setApiKeys(apiKeysData.data || []);
       setBot(botData as unknown as Bot);
     } catch (error) {
       message.error("获取API密钥列表失败");
+      console.error("获取API密钥失败:", error);
     } finally {
       setLoading(false);
     }
@@ -78,6 +82,7 @@ const ApiKeys: React.FC = () => {
         botId,
         values
       )) as unknown as ApiKey;
+      console.log("创建API密钥响应:", result);
       message.success("API密钥创建成功");
 
       // 显示完整密钥
