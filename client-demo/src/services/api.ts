@@ -2,9 +2,9 @@ import axios from "axios";
 import { message } from "antd";
 import { config } from "../config";
 
-// 创建 Dify API 客户端
-const difyApi = axios.create({
-  baseURL: config.difyApiBaseUrl,
+// 创建 Server API 客户端（通过 server 的 Dify 代理）
+const serverApi = axios.create({
+  baseURL: config.serverApiBaseUrl,
   timeout: 30000,
   headers: {
     Authorization: `Bearer ${config.apiKey}`,
@@ -13,27 +13,27 @@ const difyApi = axios.create({
 });
 
 // 响应拦截器
-difyApi.interceptors.response.use(
+serverApi.interceptors.response.use(
   (response) => {
     return response.data;
   },
   (error) => {
-    console.error("Dify API Error:", error);
+    console.error("Server API Error:", error);
     message.error(error.response?.data?.message || "请求失败");
     return Promise.reject(error);
   }
 );
 
-// Dify API 接口
+// Server API 接口（通过 server 的 Dify 代理）
 export const difyAPI = {
   // 获取应用信息
-  getInfo: (): Promise<any> => difyApi.get("/info"),
+  getInfo: (): Promise<any> => serverApi.get("/info"),
 
   // 获取应用参数
-  getParameters: (): Promise<any> => difyApi.get("/parameters"),
+  getParameters: (): Promise<any> => serverApi.get("/parameters"),
 
   // 获取应用Meta信息
-  getMeta: (): Promise<any> => difyApi.get("/meta"),
+  getMeta: (): Promise<any> => serverApi.get("/meta"),
 
   // 发送消息 - 阻塞模式
   sendMessage: (data: {
@@ -44,7 +44,7 @@ export const difyAPI = {
     files?: any[];
     auto_generate_name?: boolean;
   }): Promise<any> =>
-    difyApi.post("/chat-messages", {
+    serverApi.post("/chat-messages", {
       ...data,
       response_mode: "blocking",
     }),
@@ -58,7 +58,7 @@ export const difyAPI = {
     files?: any[];
     auto_generate_name?: boolean;
   }): Promise<Response> => {
-    return fetch(`${config.difyApiBaseUrl}/chat-messages`, {
+    return fetch(`${config.serverApiBaseUrl}/chat-messages`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${config.apiKey}`,
@@ -72,4 +72,4 @@ export const difyAPI = {
   },
 };
 
-export default difyApi;
+export default serverApi;
