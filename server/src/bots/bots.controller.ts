@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -41,8 +42,17 @@ export class BotsController {
   @Get()
   @ApiOperation({ summary: "获取机器人列表" })
   @ApiResponse({ status: 200, description: "获取成功", type: [BotResponseDto] })
-  async findAll(@User() user: any) {
-    return this.botsService.findAll(user.id, user.role);
+  async findAll(
+    @User() user: any,
+    @Query("page") page?: number,
+    @Query("limit") limit?: number,
+    @Query("search") search?: string
+  ) {
+    return this.botsService.findAll(user.id, user.role, {
+      page: page || 1,
+      limit: limit || 20,
+      search,
+    });
   }
 
   @Get("public")

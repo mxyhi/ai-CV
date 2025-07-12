@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Statistic, Typography, Space, Spin } from "antd";
-import {
-  RobotOutlined,
-  MessageOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
+import { RobotOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { botsAPI } from "../services/api";
 import type { Bot } from "../types";
 
@@ -30,10 +26,6 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const activeBots = bots.filter((bot) => bot.isActive);
-  const totalConversations = bots.reduce(
-    (sum, bot) => sum + (bot._count?.conversations || 0),
-    0
-  );
 
   if (loading) {
     return (

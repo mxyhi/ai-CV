@@ -53,13 +53,18 @@ export const authAPI = {
 
 // 机器人相关API
 export const botsAPI = {
-  getList: () => api.get("/bots"),
+  getList: (params?: { page?: number; limit?: number; search?: string }) =>
+    api.get("/bots", { params }),
   getPublicList: () => api.get("/bots/public"),
   getById: (id: string) => api.get(`/bots/${id}`),
   create: (data: any) => api.post("/bots", data),
   update: (id: string, data: any) => api.patch(`/bots/${id}`, data),
   delete: (id: string) => api.delete(`/bots/${id}`),
   getApiKeys: (id: string) => api.get(`/bots/${id}/api-keys`),
+  // 同步机器人信息
+  sync: (id: string) => api.post(`/bots/${id}/sync`),
+  // 验证Dify连接
+  validateDifyConnection: (id: string) => api.post(`/bots/${id}/validate`),
 };
 
 // API Key 相关API

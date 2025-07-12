@@ -5,32 +5,22 @@ import {
   Button,
   Card,
   Typography,
-  Select,
   Switch,
-  InputNumber,
   message,
   Space,
-  Upload,
-  Avatar,
 } from "antd";
-import {
-  ArrowLeftOutlined,
-  SaveOutlined,
-  RobotOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { botsAPI } from "../services/api";
 import type { CreateBotForm } from "../types";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { TextArea } = Input;
-const { Option } = Select;
 
 const BotCreate: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [avatarUrl] = useState<string>("");
   const navigate = useNavigate();
 
   const handleSubmit = async (values: CreateBotForm) => {
@@ -47,12 +37,6 @@ const BotCreate: React.FC = () => {
       message.error(error.response?.data?.message || "创建失败");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleAvatarChange = (info: any) => {
-    if (info.file.status === "done") {
-      setAvatarUrl(info.file.response?.url || "");
     }
   };
 

@@ -13,7 +13,6 @@ import {
   MenuUnfoldOutlined,
   RobotOutlined,
   DashboardOutlined,
-  MessageOutlined,
   UserOutlined,
   LogoutOutlined,
   SettingOutlined,

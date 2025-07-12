@@ -37,29 +37,64 @@ export class BotsService {
     return bot;
   }
 
-  async findAll(userId: string, userRole: string) {
-    const where = userRole === "ADMIN" ? {} : { createdBy: userId };
+  async findAll(
+    userId: string,
+    userRole: string,
+    options?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+    }
+  ) {
+    const { page = 1, limit = 20, search } = options || {};
+    const skip = (page - 1) * limit;
 
-    return this.prisma.bot.findMany({
-      where,
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            name: true,
+    let where: any = userRole === "ADMIN" ? {} : { createdBy: userId };
+
+    // 添加搜索条件
+    if (search) {
+      where = {
+        ...where,
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+        ],
+      };
+    }
+
+    const [bots, total] = await Promise.all([
+      this.prisma.bot.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              name: true,
+            },
+          },
+          _count: {
+            select: {
+              conversations: true,
+            },
           },
         },
-        _count: {
-          select: {
-            conversations: true,
-          },
+        orderBy: {
+          createdAt: "desc",
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        skip,
+        take: limit,
+      }),
+      this.prisma.bot.count({ where }),
+    ]);
+
+    return {
+      data: bots,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string, userId: string, userRole: string) {

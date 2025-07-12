@@ -9,6 +9,7 @@ import {
   message,
   Typography,
   Card,
+  Input,
 } from "antd";
 import {
   PlusOutlined,
@@ -16,6 +17,9 @@ import {
   DeleteOutlined,
   RobotOutlined,
   KeyOutlined,
+  SyncOutlined,
+  CheckCircleOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { botsAPI } from "../services/api";
@@ -27,13 +31,30 @@ const { Title } = Typography;
 const Bots: React.FC = () => {
   const [bots, setBots] = useState<Bot[]>([]);
   const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
-  const fetchBots = async () => {
+  const fetchBots = async (
+    page = currentPage,
+    size = pageSize,
+    search = searchText
+  ) => {
     try {
       setLoading(true);
-      const data = await botsAPI.getList();
-      setBots(data as unknown as Bot[]);
+      const data = await botsAPI.getList({
+        page,
+        limit: size,
+        search: search || undefined,
+      });
+      // server现在返回分页格式 {data: [], total: number, page: number, limit: number}
+      const result = data as any;
+      setBots(result.data || []);
+      setTotal(result.total || 0);
+      setCurrentPage(page);
+      setPageSize(size);
     } catch (error) {
       message.error("获取机器人列表失败");
     } finally {
@@ -45,6 +66,17 @@ const Bots: React.FC = () => {
     fetchBots();
   }, []);
 
+  const handleSearch = (value: string) => {
+    setSearchText(value);
+    setCurrentPage(1);
+    fetchBots(1, pageSize, value);
+  };
+
+  const handleTableChange = (pagination: any) => {
+    const { current, pageSize: size } = pagination;
+    fetchBots(current, size, searchText);
+  };
+
   const handleDelete = async (id: string) => {
     try {
       await botsAPI.delete(id);
@@ -52,6 +84,29 @@ const Bots: React.FC = () => {
       fetchBots();
     } catch (error) {
       message.error("删除失败");
+    }
+  };
+
+  const handleSync = async (id: string) => {
+    try {
+      await botsAPI.sync(id);
+      message.success("同步成功");
+      fetchBots();
+    } catch (error: any) {
+      message.error(error.response?.data?.message || "同步失败");
+    }
+  };
+
+  const handleValidateConnection = async (id: string) => {
+    try {
+      const result = (await botsAPI.validateDifyConnection(id)) as any;
+      if (result.valid) {
+        message.success("Dify连接验证成功");
+      } else {
+        message.error("Dify连接验证失败");
+      }
+    } catch (error: any) {
+      message.error(error.response?.data?.message || "验证失败");
     }
   };
 
@@ -113,6 +168,12 @@ const Bots: React.FC = () => {
       render: (count: number) => count || 0,
     },
     {
+      title: "创建者",
+      dataIndex: "user",
+      key: "user",
+      render: (user: any) => user?.name || user?.username || "未知",
+    },
+    {
       title: "创建时间",
       dataIndex: "createdAt",
       key: "createdAt",
@@ -121,9 +182,9 @@ const Bots: React.FC = () => {
     {
       title: "操作",
       key: "action",
-      width: 180,
+      width: 240,
       render: (_: any, record: Bot) => (
-        <Space size="small" wrap style={{ maxWidth: 180 }}>
+        <Space size="small" wrap style={{ maxWidth: 240 }}>
           <Button
             type="link"
             icon={<EditOutlined />}
@@ -139,6 +200,24 @@ const Bots: React.FC = () => {
             size="small"
           >
             API密钥
+          </Button>
+          <Button
+            type="link"
+            icon={<SyncOutlined />}
+            onClick={() => handleSync(record.id)}
+            size="small"
+            title="从Dify同步信息"
+          >
+            同步
+          </Button>
+          <Button
+            type="link"
+            icon={<CheckCircleOutlined />}
+            onClick={() => handleValidateConnection(record.id)}
+            size="small"
+            title="验证Dify连接"
+          >
+            验证
           </Button>
           <Popconfirm
             title="确定要删除这个机器人吗？"
@@ -170,13 +249,22 @@ const Bots: React.FC = () => {
           <Title level={3} style={{ margin: 0 }}>
             机器人管理
           </Title>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => navigate("/bots/create")}
-          >
-            创建机器人
-          </Button>
+          <Space>
+            <Input.Search
+              placeholder="搜索机器人名称或描述"
+              allowClear
+              style={{ width: 250 }}
+              onSearch={handleSearch}
+              enterButton={<SearchOutlined />}
+            />
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => navigate("/bots/create")}
+            >
+              创建机器人
+            </Button>
+          </Space>
         </div>
 
         <Table
@@ -185,10 +273,16 @@ const Bots: React.FC = () => {
           rowKey="id"
           loading={loading}
           pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: total,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total) => `共 ${total} 条记录`,
+            showTotal: (total, range) =>
+              `第 ${range[0]}-${range[1]} 条，共 ${total} 条记录`,
+            pageSizeOptions: ["10", "20", "50", "100"],
           }}
+          onChange={handleTableChange}
         />
       </Card>
     </div>
