@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Layout, Typography, Button, Avatar, Space, message } from "antd";
-import { ArrowLeftOutlined, RobotOutlined } from "@ant-design/icons";
+import { Layout, Typography, Avatar, Space, message } from "antd";
+import { RobotOutlined } from "@ant-design/icons";
 import type {
   Bot,
   ChatMessage as ChatMessageType,
@@ -8,6 +8,7 @@ import type {
   SendMessageResponse,
 } from "../types";
 import { chatAPI } from "../services/api";
+import { config } from "../config";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 
@@ -16,10 +17,9 @@ const { Title, Text } = Typography;
 
 interface ChatInterfaceProps {
   bot: Bot;
-  onBack: () => void;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot }) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [conversationId, setConversationId] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -68,6 +68,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
           botName: msg.role === "ASSISTANT" ? bot.name : undefined,
         })
       );
+
+      // 如果没有消息，添加欢迎消息
+      if (chatMessages.length === 0) {
+        const welcomeMessage: ChatMessageType = {
+          id: `welcome_${Date.now()}`,
+          content:
+            bot.welcomeMessage || "您好！我是AI客服，有什么可以帮助您的吗？",
+          role: "ASSISTANT",
+          timestamp: new Date(),
+          avatar: bot.avatar,
+          botName: bot.name,
+        };
+        chatMessages.push(welcomeMessage);
+      }
 
       setMessages(chatMessages);
     } catch (error) {
@@ -151,35 +165,33 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ bot, onBack }) => {
 
   return (
     <Layout style={{ height: "100vh" }}>
-      <Header
-        style={{
-          backgroundColor: "#fff",
-          borderBottom: "1px solid #f0f0f0",
-          padding: "0 16px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Space>
-          <Button type="text" icon={<ArrowLeftOutlined />} onClick={onBack}>
-            返回
-          </Button>
-          <Avatar
-            src={bot.avatar}
-            icon={<RobotOutlined />}
-            style={{ backgroundColor: "#52c41a" }}
-          />
-          <div>
-            <Title level={4} style={{ margin: 0 }}>
-              {bot.name}
-            </Title>
-            <Text type="secondary" style={{ fontSize: "12px" }}>
-              {bot.description || "AI智能客服"}
-            </Text>
-          </div>
-        </Space>
-      </Header>
+      {config.showBotInfo && (
+        <Header
+          style={{
+            backgroundColor: "#fff",
+            borderBottom: "1px solid #f0f0f0",
+            padding: "0 16px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Space>
+            <Avatar
+              src={bot.avatar}
+              icon={<RobotOutlined />}
+              style={{ backgroundColor: "#52c41a" }}
+            />
+            <div>
+              <Title level={4} style={{ margin: 0 }}>
+                {config.appTitle}
+              </Title>
+              <Text type="secondary" style={{ fontSize: "12px" }}>
+                {bot.description || "AI智能客服"}
+              </Text>
+            </div>
+          </Space>
+        </Header>
+      )}
 
       <Content
         style={{

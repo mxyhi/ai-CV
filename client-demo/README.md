@@ -1,69 +1,67 @@
-# React + TypeScript + Vite
+# AI 客服演示客户端
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+这是一个配置为使用特定 AI 机器人的客户端演示应用，用于展示 AI 客服的对话功能。
 
-Currently, two official plugins are available:
+## 功能特点
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🤖 **指定机器人**: 通过配置文件指定要使用的 AI 机器人，无需用户选择
+- 💬 **实时对话**: 支持与 AI 机器人进行实时对话
+- 🎨 **简洁界面**: 专注于对话体验的简洁界面设计
+- ⚙️ **灵活配置**: 支持通过环境变量自定义各种设置
 
-## Expanding the ESLint configuration
+## 配置说明
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 环境变量配置
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+复制 `.env.example` 文件为 `.env.local` 并修改相应的配置：
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.example .env.local
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 配置项说明
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| 环境变量             | 说明                   | 默认值                      |
+| -------------------- | ---------------------- | --------------------------- |
+| `VITE_BOT_ID`        | 要使用的机器人 ID      | `1`                         |
+| `VITE_API_BASE_URL`  | API 服务器地址         | `http://localhost:3000/api` |
+| `VITE_APP_TITLE`     | 应用标题               | `AI客服演示`                |
+| `VITE_SHOW_BOT_INFO` | 是否显示机器人信息头部 | `true`                      |
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 安装和运行
+
+```bash
+# 安装依赖
+pnpm install
+
+# 启动开发服务器
+pnpm dev
+
+# 构建生产版本
+pnpm build
+
+# 预览生产版本
+pnpm preview
 ```
+
+## 使用场景
+
+- **客户服务**: 嵌入到客户服务页面，提供 24/7 的 AI 客服支持
+- **产品演示**: 展示 AI 机器人的对话能力和响应质量
+- **集成测试**: 测试特定机器人的配置和性能
+- **客户体验**: 让客户直接体验 AI 客服的服务质量
+
+## 技术栈
+
+- React 18
+- TypeScript
+- Vite
+- Ant Design
+- Axios
+
+## 注意事项
+
+1. 确保后端 API 服务正在运行
+2. 配置的机器人 ID 必须存在且可访问
+3. 如果机器人加载失败，会显示错误提示
+4. 支持响应式设计，适配移动端和桌面端

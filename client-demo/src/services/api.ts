@@ -1,9 +1,10 @@
 import axios from "axios";
 import { message } from "antd";
+import { config } from "../config";
 
 // 创建axios实例
 const api = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: config.apiBaseUrl,
   timeout: 30000,
 });
 
